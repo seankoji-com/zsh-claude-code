@@ -7,21 +7,23 @@
 ZSH_CLAUDE_CODE_DIR=${0:A:h}
 
 fpath+=("$ZSH_CLAUDE_CODE_DIR/completions")
+# Register the autoload file, including when compinit ran before this plugin.
+autoload -Uz _claude
 
 # compdef only exists after compinit. When this plugin loads first, defer the
 # registrations until compinit has run rather than dropping them silently,
 # which is what a bare `compdef` call does here.
 if (( $+functions[compdef] )); then
-  compdef _claude_code claude-code
-  compdef _claude_code claude
-  compdef _claude_code cc
+  compdef _claude claude-code
+  compdef _claude claude
+  compdef _claude cc
 else
   autoload -Uz add-zsh-hook
   _zsh_claude_code_late_compdef() {
     (( $+functions[compdef] )) || return 0
-    compdef _claude_code claude-code
-    compdef _claude_code claude
-    compdef _claude_code cc
+    compdef _claude claude-code
+    compdef _claude claude
+    compdef _claude cc
     add-zsh-hook -d precmd _zsh_claude_code_late_compdef
   }
   add-zsh-hook precmd _zsh_claude_code_late_compdef
