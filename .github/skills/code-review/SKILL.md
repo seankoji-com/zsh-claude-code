@@ -36,10 +36,9 @@ subcommands and flags). Everything else is scaffolding around them.
 
 ## Do not spend attention here
 
-- `.github/workflows/*.yml` diffs from `chore(ci): sync caller templates
-  from seankoji-com/.github` PRs — 3 of this repo's 5 PRs to date are
-  exactly this bot sync; the content is authored in the
-  `seankoji-com/.github` hub repo, not here.
+- Unchanged `call-reusable-*.yml` template content can be checked against
+  the central source. Review local workflow changes, including caller
+  triggers, permissions, runner choices, and pinned revisions.
 - `README.md` / `LICENSE` — prose and license text, no logic.
 - Shell formatting (quoting, indentation) with no lint config to violate
   — only flag it if it actually breaks under `zsh`, not as style.
