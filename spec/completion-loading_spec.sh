@@ -21,7 +21,7 @@ Describe 'completion loading with real compinit'
           compinit -D -i
           _zsh_claude_code_late_compdef
         fi
-        for command_name in claude claude-code cc; do
+        for command_name in claude claude-code; do
           ( autoload +X "$_comps[$command_name]" ) || return
         done
       ' test "$1"

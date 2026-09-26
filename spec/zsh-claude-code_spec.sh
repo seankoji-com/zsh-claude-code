@@ -10,7 +10,7 @@ Describe 'zsh-claude-code.plugin.zsh'
 
     It 'ships a completion file for the right commands'
       When call head -1 completions/_claude
-      The output should equal '#compdef claude claude-code cc'
+      The output should equal '#compdef claude claude-code'
     End
 
     # A bare compdef call before compinit is silently discarded, so the
@@ -32,16 +32,41 @@ Describe 'zsh-claude-code.plugin.zsh'
   End
 
   Describe 'aliases'
-    Parameters
-      cc     'claude'
-      ccc    'claude chat'
-      cca    'claude api'
-      cccfg  'claude config'
+    It 'defines cld'
+      When call print -r -- "${aliases[cld]}"
+      The output should equal 'claude'
     End
 
-    It "defines $1"
-      When call print -r -- "${aliases[$1]}"
-      The output should equal "$2"
+    # cc is the C compiler; the plugin must not shadow it unless asked to.
+    It 'leaves cc alone by default'
+      When call print -r -- "[${aliases[cc]}]"
+      The output should equal '[]'
+    End
+
+    It 'defines cc when the zstyle opts in'
+      run_it() {
+        zsh -f -c '
+          zstyle ":zsh-claude-code:aliases" cc yes
+          source ./zsh-claude-code.plugin.zsh
+          print -r -- "${aliases[cc]}"
+        '
+      }
+      When call run_it
+      The output should equal 'claude'
+    End
+
+    Describe 'removed aliases'
+      Parameters
+        ccc
+        cca
+        cccfg
+      End
+
+      # claude has no chat, api or config subcommands.
+      It "does not define $1"
+        When call print -r -- "[${aliases[$1]}]"
+        The output should equal '[]'
+      End
     End
   End
 End
