@@ -2,7 +2,7 @@
 
 Zsh completions and aliases for the [Claude Code](https://docs.claude.com/en/docs/claude-code) CLI.
 
-The plugin adds a completion definition (`completions/_claude`) to your `fpath` and registers it for the `claude`, `claude-code`, and `cc` commands. Completions are autoloaded on the first Tab press rather than sourced at startup. If the plugin loads before `compinit`, the `compdef` registrations are deferred via a `precmd` hook and applied once `compinit` has run, so they are never silently dropped. Completion covers top-level flags (`--model`, `--permission-mode`, `--output-format`, `--resume`, etc.) and the `agents`, `auth`, `mcp`, `plugin`, `doctor`, `install`, `setup-token`, and `update` subcommands, including their own options. A handful of short aliases are also defined.
+The plugin adds a completion definition (`completions/_claude`) to your `fpath` and registers it for the `claude` and `claude-code` commands. Completions are autoloaded on the first Tab press rather than sourced at startup. If the plugin loads before `compinit`, the `compdef` registrations are deferred via a `precmd` hook and applied once `compinit` has run, so they are never silently dropped. Completion covers the top-level flags and every subcommand that `claude --help` lists (background sessions, `auth`, `auto-mode`, `mcp`, `plugin`, `project`, `ultrareview` and the rest), including their own options. A weekly workflow compares the completions against the latest Claude Code release and opens an issue when they drift (see [Keeping completions current](#keeping-completions-current)).
 
 ## Installation
 
@@ -44,16 +44,27 @@ plugins=(... zsh-claude-code)
 
 ## Usage
 
-Tab completion is available for `claude`, `claude-code`, and `cc` once the plugin is loaded.
+Tab completion is available for `claude` and `claude-code` once the plugin is loaded. Aliases complete through their expansion.
 
-The following aliases are provided:
+| Alias | Expands to |
+|-------|------------|
+| `cld` | `claude`   |
 
-| Alias    | Expands to      |
-|----------|-----------------|
-| `cc`     | `claude`        |
-| `ccc`    | `claude chat`   |
-| `cca`    | `claude api`    |
-| `cccfg`  | `claude config` |
+`cc` is not aliased by default because it shadows the C compiler. To get it back:
+
+```zsh
+zstyle ':zsh-claude-code:aliases' cc yes   # before the plugin loads
+```
+
+## Keeping completions current
+
+`scripts/completion-drift.sh` walks `claude --help` and every subcommand's `--help`, then lists flags and subcommands missing from `completions/_claude` and flags the completion file still offers that the CLI dropped:
+
+```zsh
+scripts/completion-drift.sh claude completions/_claude
+```
+
+It needs bash 4 or later. The `completion-drift` workflow runs it every Monday against the latest `@anthropic-ai/claude-code` from npm and opens or updates a single issue when it finds drift.
 
 ## License
 

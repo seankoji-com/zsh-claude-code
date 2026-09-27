@@ -16,20 +16,23 @@ autoload -Uz _claude
 if (( $+functions[compdef] )); then
   compdef _claude claude-code
   compdef _claude claude
-  compdef _claude cc
 else
   autoload -Uz add-zsh-hook
   _zsh_claude_code_late_compdef() {
     (( $+functions[compdef] )) || return 0
     compdef _claude claude-code
     compdef _claude claude
-    compdef _claude cc
     add-zsh-hook -d precmd _zsh_claude_code_late_compdef
   }
   add-zsh-hook precmd _zsh_claude_code_late_compdef
 fi
 
-alias cc='claude'
-alias ccc='claude chat'
-alias cca='claude api'
-alias cccfg='claude config'
+# Aliases complete through their expansion, so none needs its own compdef.
+#
+# `cc` is the C compiler on most systems, so the plugin no longer claims it by
+# default. Opt back in with:
+#   zstyle ':zsh-claude-code:aliases' cc yes
+alias cld='claude'
+if zstyle -t ':zsh-claude-code:aliases' cc; then
+  alias cc='claude'
+fi
