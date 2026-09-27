@@ -34,11 +34,14 @@ subcommands and flags). Everything else is scaffolding around them.
   `completions/_claude` subcommands, so a new or changed subcommand's
   correctness rests on review, not CI.
 
+- Review local workflow changes, including reusable caller triggers,
+  permissions, runner choices, and pinned revisions.
+
 ## Do not spend attention here
 
-- Unchanged `call-reusable-*.yml` template content can be checked against
-  the central source. Review local workflow changes, including caller
-  triggers, permissions, runner choices, and pinned revisions.
+- Unchanged reusable workflow template content can be checked against its
+  central source; review any local changes.
+
 - `README.md` / `LICENSE` — prose and license text, no logic.
 - Shell formatting (quoting, indentation) with no lint config to violate
   — only flag it if it actually breaks under `zsh`, not as style.
