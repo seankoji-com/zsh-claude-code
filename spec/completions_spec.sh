@@ -41,12 +41,16 @@ Describe 'completions/_claude'
       import
       logs
       project
+      purge
       respawn
       rm
       stop
       kill
       ultrareview
       update
+      configure
+      restore-set-aside
+      test
     End
 
     It "lists the $1 subcommand"
@@ -60,6 +64,8 @@ Describe 'completions/_claude'
       --mcp-debug
       --allowed
       --disallowed
+      --client-data-url
+      --registry
     End
 
     It "no longer offers the removed $1 flag"

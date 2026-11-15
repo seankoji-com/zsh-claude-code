@@ -1,8 +1,8 @@
 #compdef claude claude-code
 
-# Completions for the Claude Code CLI, checked against `claude --help` and each
-# subcommand's --help (Claude Code 2.1.283). scripts/completion-drift.sh
-# reports anything the installed CLI shows that this file does not.
+# Completions for the Claude Code CLI. The issue #17 updates were checked
+# against affected --help output in Claude Code 2.1.325. The drift script
+# compares the installed CLI's help with this file.
 
 # Main completion function
 _claude_code() {
@@ -24,6 +24,7 @@ _claude_code() {
         'plugin:Manage Claude Code plugins'
         'plugins:Manage Claude Code plugins'
         'project:Manage Claude Code project state'
+        'purge:Delete Claude Code state for a project'
         'respawn:Restart a background session on the current version'
         'rm:Delete a background session and its worktree'
         'setup-token:Set up a long-lived authentication token'
@@ -50,12 +51,12 @@ _claude_code() {
         '*--betas[Beta headers to include in API requests]:beta headers:' \
         '--brief[Enable SendUserMessage tool for agent-to-user communication]' \
         '(--no-chrome)--chrome[Enable Claude in Chrome integration]' \
-        '--client-data-url[URL for a signed configuration document]:url:_urls' \
         '--cloud[Create or attach to a cloud session]::description, session id or url:' \
         {-c,--continue}'[Continue the most recent conversation]' \
         '--dangerously-skip-permissions[Bypass all permission checks]' \
         {-d,--debug}'[Enable debug mode with optional category filter]::filter:' \
         '--debug-file[Write debug logs to a specific file path]:path:_files' \
+        '--desktop[Open in Claude Desktop instead of the terminal]' \
         '--disable-slash-commands[Disable all skills]' \
         '*'{--disallowedTools,--disallowed-tools}'[Tool names to deny]:tools:' \
         '--effort[Effort level for the current session]:level:(low medium high xhigh max)' \
@@ -151,6 +152,9 @@ _claude_code() {
                 project)
                     _claude_code_project
                     ;;
+                purge)
+                    _claude_code_purge
+                    ;;
                 respawn)
                     _arguments \
                         '--all[Restart every background session]' \
@@ -170,6 +174,7 @@ _claude_code() {
                         '(--post)--no-post[Do not post the findings to the PR]' \
                         '(--no-post)--post[Post the findings to the PR as you]' \
                         '--timeout[Maximum minutes to wait for the review]:minutes:' \
+                        '--trust-workspace[Trust the current folder for this run]' \
                         {-h,--help}'[Display help]' \
                         '1:PR number or base branch:'
                     ;;
@@ -317,17 +322,21 @@ _claude_code_project() {
         args)
             case $line[1] in
                 purge)
-                    _arguments \
-                        '(1)--all[Purge state for every project]' \
-                        '--dry-run[List what would be deleted without deleting anything]' \
-                        {-i,--interactive}'[Prompt for each item before deleting]' \
-                        {-y,--yes}'[Skip confirmation prompt]' \
-                        {-h,--help}'[Display help]' \
-                        '1:project path:_files -/'
+                    _claude_code_purge
                     ;;
             esac
             ;;
     esac
+}
+
+_claude_code_purge() {
+    _arguments \
+        '(1)--all[Purge state for every project]' \
+        '--dry-run[List what would be deleted without deleting anything]' \
+        {-i,--interactive}'[Prompt for each item before deleting]' \
+        {-y,--yes}'[Skip confirmation prompt]' \
+        {-h,--help}'[Display help]' \
+        '1:project path:_files -/'
 }
 
 # plugin subcommand completion
@@ -344,6 +353,7 @@ _claude_code_plugin() {
         command)
             local -a plugin_cmds
             plugin_cmds=(
+                'configure:Show or save plugin options'
                 'details:Show a plugin'"'"'s component inventory and token cost'
                 'disable:Disable an enabled plugin'
                 'enable:Enable a disabled plugin'
@@ -356,7 +366,9 @@ _claude_code_plugin() {
                 'marketplace:Manage Claude Code marketplaces'
                 'prune:Remove auto-installed dependencies that are no longer needed'
                 'autoremove:Remove auto-installed dependencies that are no longer needed'
+                'restore-set-aside:Restore options and secrets set aside for a plugin'
                 'tag:Create a git tag for a plugin release'
+                'test:Run a mod'"'"'s tests'
                 'uninstall:Uninstall an installed plugin'
                 'remove:Uninstall an installed plugin'
                 'update:Update a plugin to the latest version'
@@ -366,6 +378,13 @@ _claude_code_plugin() {
             ;;
         args)
             case $line[1] in
+                configure)
+                    _arguments \
+                        {-h,--help}'[Display help]' \
+                        '--json[Output as JSON]' \
+                        '--values-stdin[Read option values as JSON from stdin]' \
+                        '1:plugin:'
+                    ;;
                 marketplace)
                     _claude_code_plugin_marketplace
                     ;;
@@ -383,7 +402,7 @@ _claude_code_plugin() {
                         '*--config[Set a userConfig option declared in the manifest]:key=value:' \
                         {-h,--help}'[Display help]' \
                         '--json[Print one machine-readable result line]' \
-                        '--registry[npm registry for a <package>@npm install]:url:_urls' \
+                        '--marketplace[Install from a marketplace source]:source:_files' \
                         {-s,--scope}'[Installation scope]:scope:(user project local)' \
                         {-y,--yes}'[Accept the displayed marketplace-declared command]' \
                         '1:plugin:'
@@ -426,6 +445,7 @@ _claude_code_plugin() {
                 list)
                     _arguments \
                         '--available[Include available plugins from marketplaces (requires --json)]' \
+                        '--data-size[Measure saved plugin data (requires --json)]::plugin:' \
                         '--json[Output as JSON]' \
                         {-h,--help}'[Display help]'
                     ;;
@@ -446,6 +466,17 @@ _claude_code_plugin() {
                         '--remote[Remote to push to with --push]:remote:' \
                         '1:path:_files -/'
                     ;;
+                restore-set-aside)
+                    _arguments \
+                        '--discard[Delete the set-aside values]' \
+                        {-h,--help}'[Display help]' \
+                        '1:plugin:'
+                    ;;
+                test)
+                    _arguments \
+                        {-h,--help}'[Display help]' \
+                        '1:mod directory:_files -/'
+                    ;;
                 update)
                     _arguments \
                         '--accept-command[Accept the marketplace-declared command with this sha256]:sha256:' \
@@ -459,6 +490,7 @@ _claude_code_plugin() {
                     _arguments \
                         {-h,--help}'[Display help]' \
                         '--json[Output the validation report as JSON]' \
+                        '--profile[Apply the directory submission profile]:profile:(directory)' \
                         '--strict[Treat warnings as errors]' \
                         '1:path:_files'
                     ;;
@@ -478,6 +510,7 @@ _claude_code_plugin_eval() {
         '*--allow-tools[Operator grant for gated tools]:tools:' \
         '--case[Filter cases by name glob]:glob:' \
         {-j,--concurrency}'[Run up to n agent runs at once]:n:' \
+        '*--disallow-tools[Built-in tools to exclude from every case]:tools:' \
         '--eval-dir[Directory below the plugin that holds the eval cases]:dir:_files -/' \
         {-h,--help}'[Display help]' \
         '--json[Print the full run result as JSON]::path:_files' \
