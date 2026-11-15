@@ -4,7 +4,7 @@ Describe 'zsh-claude-code.plugin.zsh'
 
   Describe 'completions'
     It 'adds its completions directory to fpath'
-      When call print -r -- "${fpath[(r)${PWD:A}/completions]}"
+      When call print -r -- "${fpath[(r)${(b)PWD:A}/completions]}"
       The output should equal "${PWD:A}/completions"
     End
 

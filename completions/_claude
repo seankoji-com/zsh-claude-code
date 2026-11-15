@@ -403,7 +403,6 @@ _claude_code_plugin() {
                         {-h,--help}'[Display help]' \
                         '--json[Print one machine-readable result line]' \
                         '--marketplace[Install from a marketplace source]:source:_files' \
-                        '--registry[npm registry for a <package>@npm install]:url:_urls' \
                         {-s,--scope}'[Installation scope]:scope:(user project local)' \
                         {-y,--yes}'[Accept the displayed marketplace-declared command]' \
                         '1:plugin:'

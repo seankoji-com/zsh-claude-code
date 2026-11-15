@@ -30,6 +30,21 @@ Describe 'completion command contexts'
     specs_for "$parts[1]" | grep -F -- "$parts[2]["
   }
 
+  root_commands() {
+    zsh -f -c '
+      _arguments() { state=command; }
+      _describe() { print -rl -- "${commands[@]}"; }
+      source completions/_claude >/dev/null
+      _claude_code
+    '
+  }
+
+  It 'offers purge among top-level commands'
+    When call root_commands
+    The output should include 'purge:'
+    The status should be success
+  End
+
   Describe 'listed options'
   Parameters
     'root --desktop'

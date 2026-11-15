@@ -65,6 +65,7 @@ Describe 'completions/_claude'
       --allowed
       --disallowed
       --client-data-url
+      --registry
     End
 
     It "no longer offers the removed $1 flag"
