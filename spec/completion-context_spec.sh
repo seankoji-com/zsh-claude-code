@@ -17,6 +17,7 @@ Describe 'completion command contexts'
       case $target in
         root) _claude_code ;;
         ultrareview) _claude_code ;;
+        purge) _claude_code ;;
         eval) _claude_code_plugin_eval ;;
         *) _claude_code_plugin ;;
       esac
@@ -26,9 +27,10 @@ Describe 'completion command contexts'
   has_spec() {
     local -a parts
     parts=(${=1})
-    specs_for "$parts[1]" | grep -F -- "$parts[2]"
+    specs_for "$parts[1]" | grep -F -- "$parts[2]["
   }
 
+  Describe 'listed options'
   Parameters
     'root --desktop'
     'configure --values-stdin'
@@ -37,6 +39,7 @@ Describe 'completion command contexts'
     'validate --profile'
     'eval --disallow-tools'
     'ultrareview --trust-workspace'
+    'purge --dry-run'
     'restore-set-aside --discard'
   End
 
@@ -44,5 +47,21 @@ Describe 'completion command contexts'
     When call has_spec "$1"
     The status should be success
     The output should be present
+  End
+  End
+  It 'marks the data-size plugin argument as optional'
+    When call specs_for list
+    The output should include '--data-size[Measure saved plugin data (requires --json)]::plugin:'
+  End
+
+  It 'completes the documented validation profile'
+    When call specs_for validate
+    The output should include ':profile:(directory)'
+  End
+
+  It 'does not attach a value to the workspace trust flag'
+    When call specs_for ultrareview
+    The output should include '--trust-workspace[Trust the current folder for this run]'
+    The output should not include '--trust-workspace[Trust the current folder for this run]:'
   End
 End

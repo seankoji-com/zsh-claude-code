@@ -41,6 +41,7 @@ Describe 'completions/_claude'
       import
       logs
       project
+      purge
       respawn
       rm
       stop

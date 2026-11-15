@@ -24,6 +24,7 @@ _claude_code() {
         'plugin:Manage Claude Code plugins'
         'plugins:Manage Claude Code plugins'
         'project:Manage Claude Code project state'
+        'purge:Delete Claude Code state for a project'
         'respawn:Restart a background session on the current version'
         'rm:Delete a background session and its worktree'
         'setup-token:Set up a long-lived authentication token'
@@ -150,6 +151,9 @@ _claude_code() {
                     ;;
                 project)
                     _claude_code_project
+                    ;;
+                purge)
+                    _claude_code_purge
                     ;;
                 respawn)
                     _arguments \
@@ -318,17 +322,21 @@ _claude_code_project() {
         args)
             case $line[1] in
                 purge)
-                    _arguments \
-                        '(1)--all[Purge state for every project]' \
-                        '--dry-run[List what would be deleted without deleting anything]' \
-                        {-i,--interactive}'[Prompt for each item before deleting]' \
-                        {-y,--yes}'[Skip confirmation prompt]' \
-                        {-h,--help}'[Display help]' \
-                        '1:project path:_files -/'
+                    _claude_code_purge
                     ;;
             esac
             ;;
     esac
+}
+
+_claude_code_purge() {
+    _arguments \
+        '(1)--all[Purge state for every project]' \
+        '--dry-run[List what would be deleted without deleting anything]' \
+        {-i,--interactive}'[Prompt for each item before deleting]' \
+        {-y,--yes}'[Skip confirmation prompt]' \
+        {-h,--help}'[Display help]' \
+        '1:project path:_files -/'
 }
 
 # plugin subcommand completion
