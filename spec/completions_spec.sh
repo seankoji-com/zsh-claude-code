@@ -47,6 +47,9 @@ Describe 'completions/_claude'
       kill
       ultrareview
       update
+      configure
+      restore-set-aside
+      test
     End
 
     It "lists the $1 subcommand"
@@ -60,6 +63,7 @@ Describe 'completions/_claude'
       --mcp-debug
       --allowed
       --disallowed
+      --client-data-url
     End
 
     It "no longer offers the removed $1 flag"
